@@ -1,0 +1,16 @@
+{
+  "name": "pl.apkd.medicine",
+  "displayName": "Medicine",
+  "version": "3.0.1",
+  "unity": "2022.3",
+  "dependencies": {
+    "com.unity.collections": "0.9.0-preview.6"
+  },
+  "type": "tool",
+  "keywords": [
+    "medicine",
+    "di",
+    "dependency injection",
+    "inject"
+  ]
+}
