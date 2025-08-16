@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   actions: write
   packages: write
 
@@ -94,9 +94,11 @@ jobs:
 
       - name: Run tests
         run: |
+          set -euo pipefail
           size_bytes=$(docker image inspect "${{ env.IMAGE_TAG }}" --format='{{.Size}}')
           size_mib=$(awk -v b="$size_bytes" 'BEGIN{printf "%.2f", b/1024/1024}')
           echo "Docker image size: ${size_mib} MiB"
+
           docker run --rm \
             -v "$GITHUB_WORKSPACE:$PROJECT/Packages/Medicine/" \
             -v "$RUNNER_TEMP/test-results:$PROJECT/test-results" \
