@@ -184,18 +184,17 @@ jobs:
           fi
 
           git tag "v${{ steps.ver.outputs.new }}"
-          git push origin "v${{ steps.ver.outputs.new }}"
+          git push origin "v{{ steps.ver.outputs.new }}"
           echo "pushed=true" >> "$GITHUB_OUTPUT"
 
-      - name: Create GitHub release
+      - name: Create or update latest release
         if: steps.ver.outputs.new != '' && steps.push.outputs.pushed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
-          tag="v${{ steps.ver.outputs.new }}"
-          prev_tag="${{ steps.prev.outputs.tag }}"
+          tag="latest"
           ref="${{ steps.target.outputs.ref }}"
 
           upper="${{ steps.target.outputs.sha }}"
@@ -204,7 +203,8 @@ jobs:
           fi
 
           declare -A since=()
-          if [[ -n "${prev_tag:-}" && "$prev_tag" != "$tag" ]]; then
+          prev_tag="${{ steps.prev.outputs.tag }}"
+          if [[ -n "${prev_tag:-}" ]]; then
             while read -r s; do
               [[ -n "$s" ]] && since["$s"]=1
             done < <(git rev-list "${prev_tag}..$upper")
@@ -282,10 +282,13 @@ jobs:
             fi
           done
 
+          git tag -fa "$tag" "$upper" -m "Latest rolling release"
+          git push -f origin "refs/tags/$tag"
+
           if gh release view "$tag" >/dev/null 2>&1; then
-            echo "Release $tag already exists; skipping."
+            gh release edit "$tag" --notes-file "$notes" --title "$tag" --latest
           else
-            gh release create "$tag" --title "$tag" --notes-file "$notes" --target "$ref"
+            gh release create "$tag" --title "$tag" --notes-file "$notes" --target "$upper" --latest
           fi
 
           {
