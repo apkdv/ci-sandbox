@@ -12,7 +12,7 @@ on:
           - major
         default: minor
   workflow_run:
-    workflows: ["Test"]
+    workflows: ["Tests"]
     types: [completed]
 
 permissions:
@@ -184,7 +184,7 @@ jobs:
           fi
 
           git tag "v${{ steps.ver.outputs.new }}"
-          git push origin "v{{ steps.ver.outputs.new }}"
+          git push origin "v${{ steps.ver.outputs.new }}"
           echo "pushed=true" >> "$GITHUB_OUTPUT"
 
       - name: Create or update latest release
