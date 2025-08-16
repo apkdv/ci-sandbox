@@ -186,6 +186,7 @@ jobs:
           git tag "v${{ steps.ver.outputs.new }}"
           git push origin "v${{ steps.ver.outputs.new }}"
           echo "pushed=true" >> "$GITHUB_OUTPUT"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Create or update latest release
         if: steps.ver.outputs.new != '' && steps.push.outputs.pushed == 'true'
@@ -195,12 +196,7 @@ jobs:
         run: |
           set -euo pipefail
           tag="latest"
-          ref="${{ steps.target.outputs.ref }}"
-
-          upper="${{ steps.target.outputs.sha }}"
-          if [[ -z "$upper" ]]; then
-            upper="$(git rev-parse HEAD)"
-          fi
+          upper="${{ steps.push.outputs.sha }}"
 
           declare -A since=()
           prev_tag="${{ steps.prev.outputs.tag }}"
