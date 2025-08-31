@@ -210,8 +210,8 @@ jobs:
           
           notes="release-notes.md"
           cat > "$notes" <<'MD'
-          This is a rolling release - it is automatically updated to the latest release tag.
-          Release tags are created automatically when pushed commits pass all tests.
+          This is a rolling release - it is automatically updated to the latest release tag,
+          whenever pushed commits pass all tests.
           
           Installation
           --------------
@@ -244,7 +244,7 @@ jobs:
             fi
           
             short="${sha:0:7}"
-            shortlink="<a href=\"https://github.com/${{ github.repository }}/commit/$sha\">$short</a>"
+            shortlink="[$short](https://github.com/${{ github.repository }}/commit/$sha)"
             msg="${msg//|/\\|}"
           
             new_prefix=""
@@ -295,7 +295,8 @@ jobs:
             fi
           done
           
-          printf '| | | View [diff](https://github.com/%s/compare/v%s...latest), [all recent commits](https://github.com/%s/commits/master/) | |\n' "$GITHUB_REPOSITORY" "${{ steps.ver.outputs.old }}" "$GITHUB_REPOSITORY" >> "$notes"
+          printf '| | | [Full release diff](https://github.com/%s/compare/v%s...latest) | |\n' "$GITHUB_REPOSITORY" "${{ steps.ver.outputs.old }}" "$GITHUB_REPOSITORY" >> "$notes"
+          printf '| | | [All recent commits](https://github.com/%s/commits/master/) | |\n' "$GITHUB_REPOSITORY" "${{ steps.ver.outputs.old }}" "$GITHUB_REPOSITORY" >> "$notes"
           
           git tag -fa "$tag" "$upper" -m "Latest rolling release"
           git push -f origin "refs/tags/$tag"
@@ -307,7 +308,7 @@ jobs:
           fi
           
           {
-            echo "## $tag"
+            echo "## ${{ steps.ver.outputs.new }}"
             echo
             cat "$notes"
           } >> "$GITHUB_STEP_SUMMARY"
