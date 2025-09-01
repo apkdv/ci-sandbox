@@ -295,8 +295,8 @@ jobs:
             fi
           done
           
-          printf '| | | [Full release diff](https://github.com/%s/compare/v%s...latest) | |\n' "$GITHUB_REPOSITORY" "${{ steps.ver.outputs.old }}" "$GITHUB_REPOSITORY" >> "$notes"
-          printf '| | | [All recent commits](https://github.com/%s/commits/master/) | |\n' "$GITHUB_REPOSITORY" "${{ steps.ver.outputs.old }}" "$GITHUB_REPOSITORY" >> "$notes"
+          printf '| | | [Full release diff](https://github.com/%s/compare/v%s...latest) | |\n' "$GITHUB_REPOSITORY" "${{ steps.ver.outputs.old }}" >> "$notes"
+          printf '| | | [All recent commits](https://github.com/%s/commits/master/) | |\n' "$GITHUB_REPOSITORY" >> "$notes"
           
           git tag -fa "$tag" "$upper" -m "Latest rolling release"
           git push -f origin "refs/tags/$tag"
